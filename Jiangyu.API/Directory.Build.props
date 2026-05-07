@@ -1,0 +1,6 @@
+<Project>
+  <PropertyGroup>
+    <MelonLoaderPath>C:\Program Files (x86)\Steam\steamapps\common\Menace\MelonLoader\net6</MelonLoaderPath>
+    <GameAssembliesPath>C:\Program Files (x86)\Steam\steamapps\common\Menace\MelonLoader\Il2CppAssemblies</GameAssembliesPath>
+  </PropertyGroup>
+</Project>
