@@ -15,7 +15,7 @@ public enum ErrorSeverity
 /// Central error reporting for Jiangyu API. Writes all output to MelonLoader's
 /// Latest.log. Never throws. Tracks a running error count for in-game notification.
 /// </summary>
-public static class APIError
+public static class APILogger
 {
     private static int _errorCount = 0;
 

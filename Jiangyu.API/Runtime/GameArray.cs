@@ -35,7 +35,7 @@ public readonly struct GameArray
             }
             catch (Exception ex)
             {
-                APIError.WarnInternal("GameArray.Length", $"Failed to read array length at 0x{_arrayPointer:X}: {ex.Message}");
+                APILogger.WarnInternal("GameArray.Length", $"Failed to read array length at 0x{_arrayPointer:X}: {ex.Message}");
                 return 0;
             }
         }
@@ -61,7 +61,7 @@ public readonly struct GameArray
             }
             catch (Exception ex)
             {
-                APIError.WarnInternal("GameArray[]", $"Failed to read element at index {index} from array 0x{_arrayPointer:X}: {ex.Message}");
+                APILogger.WarnInternal("GameArray[]", $"Failed to read element at index {index} from array 0x{_arrayPointer:X}: {ex.Message}");
                 return GameObj.Null;
             }
         }
@@ -83,7 +83,7 @@ public readonly struct GameArray
         }
         catch (Exception ex)
         {
-            APIError.WarnInternal("GameArray.ReadInt", $"Failed to read int at index {index} from array 0x{_arrayPointer:X}: {ex.Message}");
+            APILogger.WarnInternal("GameArray.ReadInt", $"Failed to read int at index {index} from array 0x{_arrayPointer:X}: {ex.Message}");
             return 0;
         }
     }
@@ -105,7 +105,7 @@ public readonly struct GameArray
         }
         catch (Exception ex)
         {
-            APIError.WarnInternal("GameArray.ReadFloat", $"Failed to read float at index {index} from array 0x{_arrayPointer:X}: {ex.Message}");
+            APILogger.WarnInternal("GameArray.ReadFloat", $"Failed to read float at index {index} from array 0x{_arrayPointer:X}: {ex.Message}");
             return 0f;
         }
     }

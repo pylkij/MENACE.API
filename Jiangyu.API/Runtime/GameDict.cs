@@ -39,7 +39,7 @@ public readonly struct GameDict
                 var countOffset = OffsetCache.GetOrResolve(klass, "_count");
                 if (countOffset == 0)
                 {
-                    APIError.ReportInternal("GameDict.Count", "Failed to resolve _count");
+                    APILogger.ReportInternal("GameDict.Count", "Failed to resolve _count");
                     return 0;
                 }
 
@@ -48,7 +48,7 @@ public readonly struct GameDict
                 var freeCountOffset = OffsetCache.GetOrResolve(klass, "_freeCount");
                 if (freeCountOffset == 0)
                 {
-                    APIError.WarnInternal("GameDict.Count", "Failed to resolve _freeCount, count may include deleted entries");
+                    APILogger.WarnInternal("GameDict.Count", "Failed to resolve _freeCount, count may include deleted entries");
                     return count;
                 }
 
@@ -57,7 +57,7 @@ public readonly struct GameDict
             }
             catch (Exception ex)
             {
-                APIError.ReportInternal("GameDict.Count", "Failed to read count", ex);
+                APILogger.ReportInternal("GameDict.Count", "Failed to read count", ex);
                 return 0;
             }
         }
@@ -104,27 +104,27 @@ public readonly struct GameDict
                 var arrKlass = IL2CPP.il2cpp_object_get_class(_entriesArray);
                 if (arrKlass == IntPtr.Zero)
                 {
-                    APIError.ReportInternal("GameDict.Enumerator", "Failed to resolve entries array class");
+                    APILogger.ReportInternal("GameDict.Enumerator", "Failed to resolve entries array class");
                     return;
                 }
 
                 var elemKlass = IL2CPP.il2cpp_class_get_element_class(arrKlass);
                 if (elemKlass == IntPtr.Zero)
                 {
-                    APIError.ReportInternal("GameDict.Enumerator", "Failed to resolve entry element class");
+                    APILogger.ReportInternal("GameDict.Enumerator", "Failed to resolve entry element class");
                     return;
                 }
 
                 _entryStride = (int)IL2CPP.il2cpp_class_instance_size(elemKlass) - (2 * IntPtr.Size); // Unverified
                 if (_entryStride <= 0)
                 {
-                    APIError.ReportInternal("GameDict.Enumerator", $"Resolved entry stride is invalid: {_entryStride}");
+                    APILogger.ReportInternal("GameDict.Enumerator", $"Resolved entry stride is invalid: {_entryStride}");
                     return;
                 }
             }
             catch (Exception ex)
             {
-                APIError.ReportInternal("GameDict.Enumerator", "Init failed", ex);
+                APILogger.ReportInternal("GameDict.Enumerator", "Init failed", ex);
             }
         }
 
@@ -158,7 +158,7 @@ public readonly struct GameDict
                 }
                 catch (Exception ex)
                 {
-                    APIError.ReportInternal(
+                    APILogger.ReportInternal(
                         "GameDict.Enumerator",
                         $"Iteration aborted at index {_index}", ex);
                     return false;

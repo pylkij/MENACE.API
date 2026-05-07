@@ -53,7 +53,7 @@ public readonly struct GameList
             }
             catch (Exception ex)
             {
-                APIError.ReportInternal("GameList.Count", "Failed to read _size field", ex);
+                APILogger.ReportInternal("GameList.Count", "Failed to read _size field", ex);
                 return 0;
             }
         }
@@ -80,7 +80,7 @@ public readonly struct GameList
             }
             catch (Exception ex)
             {
-                APIError.ReportInternal("GameList.Indexer", $"Failed to read element at index {index}", ex);
+                APILogger.ReportInternal("GameList.Indexer", $"Failed to read element at index {index}", ex);
                 return GameObj.Null;
             }
         }
@@ -128,7 +128,7 @@ public readonly struct GameList
         }
         catch (Exception ex)
         {
-            APIError.ReportInternal("GameList.GetItemsArray", "Failed to read _items pointer", ex);
+            APILogger.ReportInternal("GameList.GetItemsArray", "Failed to read _items pointer", ex);
             return IntPtr.Zero;
         }
     }

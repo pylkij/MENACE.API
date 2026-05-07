@@ -7,13 +7,13 @@ namespace Jiangyu.API;
 
 /// <summary>
 /// Simplified Harmony patching helpers that resolve types at runtime and
-/// route failures to APIError instead of throwing.
+/// route failures to APILogger instead of throwing.
 /// </summary>
 public static class GamePatch
 {
     /// <summary>
     /// Apply a Harmony Postfix patch by type name and method name.
-    /// Returns false and logs to APIError on failure (never throws).
+    /// Returns false and logs to APILogger on failure (never throws).
     /// </summary>
     public static bool Postfix(HarmonyLib.Harmony harmony, string typeName,
         string methodName, MethodInfo patchMethod)
@@ -42,14 +42,14 @@ public static class GamePatch
     {
         if (type == null || !type.IsValid)
         {
-            APIError.ReportInternal("GamePatch.Postfix", "Invalid GameType");
+            APILogger.ReportInternal("GamePatch.Postfix", "Invalid GameType");
             return false;
         }
 
         var managed = type.ManagedType;
         if (managed == null)
         {
-            APIError.ReportInternal("GamePatch.Postfix",
+            APILogger.ReportInternal("GamePatch.Postfix",
                 $"No managed proxy type for {type.FullName}");
             return false;
         }
@@ -65,14 +65,14 @@ public static class GamePatch
     {
         if (type == null || !type.IsValid)
         {
-            APIError.ReportInternal("GamePatch.Prefix", "Invalid GameType");
+            APILogger.ReportInternal("GamePatch.Prefix", "Invalid GameType");
             return false;
         }
 
         var managed = type.ManagedType;
         if (managed == null)
         {
-            APIError.ReportInternal("GamePatch.Prefix",
+            APILogger.ReportInternal("GamePatch.Prefix",
                 $"No managed proxy type for {type.FullName}");
             return false;
         }
@@ -111,7 +111,7 @@ public static class GamePatch
     {
         if (harmony == null)
         {
-            APIError.ReportInternal("GamePatch", "Harmony instance is null");
+            APILogger.ReportInternal("GamePatch", "Harmony instance is null");
             return false;
         }
 
@@ -124,7 +124,7 @@ public static class GamePatch
 
             if (method == null)
             {
-                APIError.ReportInternal("GamePatch",
+                APILogger.ReportInternal("GamePatch",
                     $"Method '{methodName}' with specified parameters not found on {targetType.Name}");
                 return false;
             }
@@ -137,7 +137,7 @@ public static class GamePatch
         }
         catch (Exception ex)
         {
-            APIError.ReportInternal("GamePatch",
+            APILogger.ReportInternal("GamePatch",
                 $"Failed to patch {targetType.Name}.{methodName}", ex);
             return false;
         }
@@ -148,7 +148,7 @@ public static class GamePatch
     {
         if (harmony == null)
         {
-            APIError.ReportInternal("GamePatch", "Harmony instance is null");
+            APILogger.ReportInternal("GamePatch", "Harmony instance is null");
             return false;
         }
 
@@ -174,7 +174,7 @@ public static class GamePatch
 
             if (method == null)
             {
-                APIError.ReportInternal("GamePatch",
+                APILogger.ReportInternal("GamePatch",
                     $"Method '{methodName}' not found on {targetType.Name}");
                 return false;
             }
@@ -187,7 +187,7 @@ public static class GamePatch
         }
         catch (Exception ex)
         {
-            APIError.ReportInternal("GamePatch",
+            APILogger.ReportInternal("GamePatch",
                 $"Failed to patch {targetType.Name}.{methodName}", ex);
             return false;
         }
@@ -197,7 +197,7 @@ public static class GamePatch
     {
         if (string.IsNullOrEmpty(typeName))
         {
-            APIError.ReportInternal("GamePatch", "Type name is null or empty");
+            APILogger.ReportInternal("GamePatch", "Type name is null or empty");
             return null;
         }
 
@@ -208,7 +208,7 @@ public static class GamePatch
 
             if (gameAssembly == null)
             {
-                APIError.ReportInternal("GamePatch", "Assembly-CSharp not loaded");
+                APILogger.ReportInternal("GamePatch", "Assembly-CSharp not loaded");
                 return null;
             }
 
@@ -218,7 +218,7 @@ public static class GamePatch
 
             if (type == null)
             {
-                APIError.ReportInternal("GamePatch",
+                APILogger.ReportInternal("GamePatch",
                     $"Type '{typeName}' not found in Assembly-CSharp");
                 return null;
             }
@@ -227,7 +227,7 @@ public static class GamePatch
         }
         catch (Exception ex)
         {
-            APIError.ReportInternal("GamePatch", $"Failed to resolve type '{typeName}'", ex);
+            APILogger.ReportInternal("GamePatch", $"Failed to resolve type '{typeName}'", ex);
             return null;
         }
     }

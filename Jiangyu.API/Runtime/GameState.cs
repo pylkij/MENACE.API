@@ -52,7 +52,7 @@ public static class GameState
             }
             catch (Exception ex)
             {
-                APIError.ReportInternal("GameState.GameAssembly", "Failed to enumerate assemblies", ex);
+                APILogger.ReportInternal("GameState.GameAssembly", "Failed to enumerate assemblies", ex);
                 return null;
             }
         }
@@ -78,7 +78,7 @@ public static class GameState
         }
         catch (Exception ex)
         {
-            APIError.ReportInternal("GameState.FindManagedType", $"Failed for '{fullName}'", ex);
+            APILogger.ReportInternal("GameState.FindManagedType", $"Failed for '{fullName}'", ex);
             return null;
         }
     }
@@ -131,7 +131,7 @@ public static class GameState
         try { SceneLoaded?.Invoke(sceneName); }
         catch (Exception ex)
         {
-            APIError.ReportInternal("GameState.SceneLoaded", "Event handler failed", ex);
+            APILogger.ReportInternal("GameState.SceneLoaded", "Event handler failed", ex);
         }
 
         // Fire TacticalReady 30 frames after entering Tactical scene
@@ -143,7 +143,7 @@ public static class GameState
                 try { TacticalReady?.Invoke(); }
                 catch (Exception ex)
                 {
-                    APIError.ReportInternal("GameState.TacticalReady", "Event handler failed", ex);
+                    APILogger.ReportInternal("GameState.TacticalReady", "Event handler failed", ex);
                 }
             });
         }
@@ -164,7 +164,7 @@ public static class GameState
                     try { action.Callback(); }
                     catch (Exception ex)
                     {
-                        APIError.ReportInternal("GameState.RunDelayed", "Callback failed", ex);
+                        APILogger.ReportInternal("GameState.RunDelayed", "Callback failed", ex);
                     }
                 }
             }
@@ -186,19 +186,19 @@ public static class GameState
                         try { action.Callback(); }
                         catch (Exception ex)
                         {
-                            APIError.ReportInternal("GameState.RunWhen", "Callback failed", ex);
+                            APILogger.ReportInternal("GameState.RunWhen", "Callback failed", ex);
                         }
                         continue;
                     }
                 }
                 catch (Exception ex)
                 {
-                    APIError.WarnInternal("GameState.RunWhen", $"Condition threw (attempt {action.AttemptsRemaining} remaining): {ex.Message}");
+                    APILogger.WarnInternal("GameState.RunWhen", $"Condition threw (attempt {action.AttemptsRemaining} remaining): {ex.Message}");
                 }
 
                 if (action.AttemptsRemaining <= 0)
                 {
-                    APIError.Info(action.ModId, "RunWhen condition expired — callback will not run");
+                    APILogger.Info(action.ModId, "RunWhen condition expired — callback will not run");
                     _conditionalActions.RemoveAt(i);
                 } 
             }

@@ -77,7 +77,7 @@ public class GameType
         {
             ptr = TryResolveByShortName(typeName);
             if (ptr != IntPtr.Zero)
-                APIError.WarnInternal("GameType.Find",
+                APILogger.WarnInternal("GameType.Find",
                     $"Resolved '{typeName}' via short-name fallback — verify namespace against dump.cs");
         }
 
@@ -192,7 +192,7 @@ public class GameType
             }
             catch (Exception ex)
             {
-                APIError.ReportInternal("GameType.Parent", $"Failed for {FullName}", ex);
+                APILogger.ReportInternal("GameType.Parent", $"Failed for {FullName}", ex);
             }
 
             return _parent;
@@ -262,7 +262,7 @@ public class GameType
             }
             catch (Exception ex)
             {
-                APIError.ReportInternal("GameType.ManagedType", $"Failed for {FullName}", ex);
+                APILogger.ReportInternal("GameType.ManagedType", $"Failed for {FullName}", ex);
             }
 
             return _managedType;
@@ -337,7 +337,7 @@ public class GameType
         }
         catch (Exception ex)
         {
-            APIError.ReportInternal("GameType.GetIl2CppType", $"Failed for {FullName}", ex);
+            APILogger.ReportInternal("GameType.GetIl2CppType", $"Failed for {FullName}", ex);
             return null;
         }
     }

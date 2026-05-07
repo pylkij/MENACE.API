@@ -46,7 +46,7 @@ public static class GameQuery
             var managedType = type.ManagedType;
             if (managedType == null)
             {
-                APIError.WarnInternal("GameQuery.FindAllManaged", $"No managed proxy for {type.FullName}");
+                APILogger.WarnInternal("GameQuery.FindAllManaged", $"No managed proxy for {type.FullName}");
                 return Array.Empty<object>();
             }
 
@@ -60,7 +60,7 @@ public static class GameQuery
             var ptrCtor = managedType.GetConstructor(new[] { typeof(IntPtr) });
             if (ptrCtor == null)
             {
-                APIError.WarnInternal("GameQuery.FindAllManaged", $"No IntPtr constructor on {managedType.Name}");
+                APILogger.WarnInternal("GameQuery.FindAllManaged", $"No IntPtr constructor on {managedType.Name}");
                 return Array.Empty<object>();
             }
 
@@ -83,7 +83,7 @@ public static class GameQuery
                 }
                 catch (Exception ex)
                 {
-                    APIError.WarnInternal("GameQuery.FindAllManaged", $"Failed to convert object {i} of type {managedType.Name} to managed proxy: {ex.Message}");
+                    APILogger.WarnInternal("GameQuery.FindAllManaged", $"Failed to convert object {i} of type {managedType.Name} to managed proxy: {ex.Message}");
                 }
             }
 
@@ -91,7 +91,7 @@ public static class GameQuery
         }
         catch (Exception ex)
         {
-            APIError.ReportInternal("GameQuery.FindAllManaged", $"Failed for {type.FullName}", ex);
+            APILogger.ReportInternal("GameQuery.FindAllManaged", $"Failed for {type.FullName}", ex);
             return Array.Empty<object>();
         }
     }
@@ -109,7 +109,7 @@ public static class GameQuery
             var managedType = type.ManagedType;
             if (managedType == null)
             {
-                APIError.WarnInternal("GameQuery.FindAll", $"No managed proxy for {type.FullName}");
+                APILogger.WarnInternal("GameQuery.FindAll", $"No managed proxy for {type.FullName}");
                 return Array.Empty<GameObj>();
             }
 
@@ -130,7 +130,7 @@ public static class GameQuery
         }
         catch (Exception ex)
         {
-            APIError.ReportInternal("GameQuery.FindAll", $"Failed for {type.FullName}", ex);
+            APILogger.ReportInternal("GameQuery.FindAll", $"Failed for {type.FullName}", ex);
             return Array.Empty<GameObj>();
         }
     }
@@ -159,7 +159,7 @@ public static class GameQuery
         }
         catch (Exception ex)
         {
-            APIError.ReportInternal("GameQuery.FindAll<T>", $"Failed for {typeof(T).Name}", ex);
+            APILogger.ReportInternal("GameQuery.FindAll<T>", $"Failed for {typeof(T).Name}", ex);
             return Array.Empty<GameObj>();
         }
     }

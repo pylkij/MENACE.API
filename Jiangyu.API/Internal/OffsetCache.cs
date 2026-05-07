@@ -35,7 +35,7 @@ internal static class OffsetCache
         }
         catch (Exception ex)
         {
-            APIError.ReportInternal("OffsetCache", "Failed to resolve m_CachedPtr offset", ex);
+            APILogger.ReportInternal("OffsetCache", "Failed to resolve m_CachedPtr offset", ex);
         }
 
         try
@@ -50,7 +50,7 @@ internal static class OffsetCache
         }
         catch (Exception ex)
         {
-            APIError.ReportInternal("OffsetCache", "Failed to resolve List offsets", ex);
+            APILogger.ReportInternal("OffsetCache", "Failed to resolve List offsets", ex);
         }
     }
 
@@ -106,7 +106,7 @@ internal static class OffsetCache
         }
         catch (Exception ex)
         {
-            APIError.ReportInternal("OffsetCache", $"Failed to get offset for field '{fieldName}'", ex);
+            APILogger.ReportInternal("OffsetCache", $"Failed to get offset for field '{fieldName}'", ex);
             return 0;
         }
     }

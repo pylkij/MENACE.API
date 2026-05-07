@@ -70,7 +70,7 @@ public readonly struct GameObj : IEquatable<GameObj>
         }
         catch (Exception ex)
         {
-            APIError.ReportInternal("GameObj.ReadBool", $"Failed at offset {offset}", ex);
+            APILogger.ReportInternal("GameObj.ReadBool", $"Failed at offset {offset}", ex);
             return false;
         }
     }
@@ -92,7 +92,7 @@ public readonly struct GameObj : IEquatable<GameObj>
         }
         catch (Exception ex)
         {
-            APIError.ReportInternal("GameObj.ReadString", $"Failed to read '{fieldName}'", ex);
+            APILogger.ReportInternal("GameObj.ReadString", $"Failed to read '{fieldName}'", ex);
             return null;
         }
     }
@@ -116,7 +116,7 @@ public readonly struct GameObj : IEquatable<GameObj>
         }
         catch (Exception ex)
         {
-            APIError.ReportInternal("GameObj.WriteInt", $"Failed '{fieldName}'", ex);
+            APILogger.ReportInternal("GameObj.WriteInt", $"Failed '{fieldName}'", ex);
             return false;
         }
     }
@@ -133,7 +133,7 @@ public readonly struct GameObj : IEquatable<GameObj>
         }
         catch (Exception ex)
         {
-            APIError.ReportInternal("GameObj.WriteFloat", $"Failed '{fieldName}'", ex);
+            APILogger.ReportInternal("GameObj.WriteFloat", $"Failed '{fieldName}'", ex);
             return false;
         }
     }
@@ -149,7 +149,7 @@ public readonly struct GameObj : IEquatable<GameObj>
         }
         catch (Exception ex)
         {
-            APIError.ReportInternal("GameObj.WritePtr", $"Failed '{fieldName}'", ex);
+            APILogger.ReportInternal("GameObj.WritePtr", $"Failed '{fieldName}'", ex);
             return false;
         }
     }
@@ -165,7 +165,7 @@ public readonly struct GameObj : IEquatable<GameObj>
         }
         catch (Exception ex)
         {
-            APIError.ReportInternal("GameObj.ReadInt", $"Failed at offset {offset}", ex);
+            APILogger.ReportInternal("GameObj.ReadInt", $"Failed at offset {offset}", ex);
             return 0;
         }
     }
@@ -180,7 +180,7 @@ public readonly struct GameObj : IEquatable<GameObj>
         }
         catch (Exception ex)
         {
-            APIError.ReportInternal("GameObj.ReadFloat", $"Failed at offset {offset}", ex);
+            APILogger.ReportInternal("GameObj.ReadFloat", $"Failed at offset {offset}", ex);
             return 0f;
         }
     }
@@ -194,7 +194,7 @@ public readonly struct GameObj : IEquatable<GameObj>
         }
         catch (Exception ex)
         {
-            APIError.ReportInternal("GameObj.ReadPtr", $"Failed at offset {offset}", ex);
+            APILogger.ReportInternal("GameObj.ReadPtr", $"Failed at offset {offset}", ex);
             return IntPtr.Zero;
         }
     }
@@ -212,7 +212,7 @@ public readonly struct GameObj : IEquatable<GameObj>
         }
         catch (Exception ex)
         {
-            APIError.ReportInternal("GameObj.GetGameType", "Failed", ex);
+            APILogger.ReportInternal("GameObj.GetGameType", "Failed", ex);
             return GameType.Invalid;
         }
     }
@@ -245,14 +245,14 @@ public readonly struct GameObj : IEquatable<GameObj>
             var managedType = gameType?.ManagedType;
             if (managedType == null)
             {
-                APIError.WarnInternal("GameObj.ToManaged", $"No managed type for {gameType?.FullName}");
+                APILogger.WarnInternal("GameObj.ToManaged", $"No managed type for {gameType?.FullName}");
                 return null;
             }
 
             var ptrCtor = managedType.GetConstructor(new[] { typeof(IntPtr) });
             if (ptrCtor == null)
             {
-                APIError.WarnInternal("GameObj.ToManaged", $"No IntPtr constructor on {managedType.Name}");
+                APILogger.WarnInternal("GameObj.ToManaged", $"No IntPtr constructor on {managedType.Name}");
                 return null;
             }
 
@@ -260,7 +260,7 @@ public readonly struct GameObj : IEquatable<GameObj>
         }
         catch (Exception ex)
         {
-            APIError.ReportInternal("GameObj.ToManaged", "Conversion failed", ex);
+            APILogger.ReportInternal("GameObj.ToManaged", "Conversion failed", ex);
             return null;
         }
     }
@@ -281,7 +281,7 @@ public readonly struct GameObj : IEquatable<GameObj>
             var managedType = gameType?.ManagedType;
             if (managedType == null || !typeof(T).IsAssignableFrom(managedType))
             {
-                APIError.WarnInternal("GameObj.As<T>",
+                APILogger.WarnInternal("GameObj.As<T>",
                     $"Object type {gameType?.FullName} is not assignable to {typeof(T).Name}");
                 return null;
             }
@@ -289,7 +289,7 @@ public readonly struct GameObj : IEquatable<GameObj>
             var ptrCtor = typeof(T).GetConstructor(new[] { typeof(IntPtr) });
             if (ptrCtor == null)
             {
-                APIError.WarnInternal("GameObj.As<T>", $"No IntPtr constructor on {typeof(T).Name}");
+                APILogger.WarnInternal("GameObj.As<T>", $"No IntPtr constructor on {typeof(T).Name}");
                 return null;
             }
 
@@ -297,7 +297,7 @@ public readonly struct GameObj : IEquatable<GameObj>
         }
         catch (Exception ex)
         {
-            APIError.ReportInternal("GameObj.As<T>", $"Conversion to {typeof(T).Name} failed", ex);
+            APILogger.ReportInternal("GameObj.As<T>", $"Conversion to {typeof(T).Name} failed", ex);
             return null;
         }
     }
@@ -336,7 +336,7 @@ public readonly struct GameObj : IEquatable<GameObj>
         }
         catch (Exception ex)
         {
-            APIError.ReportInternal("GameObj.GetName", "Failed to retrieve object name", ex);
+            APILogger.ReportInternal("GameObj.GetName", "Failed to retrieve object name", ex);
             return null;
         }
     }
@@ -374,7 +374,7 @@ public readonly struct GameObj : IEquatable<GameObj>
         }
         catch (Exception ex)
         {
-            APIError.ReportInternal("GameObj", $"Failed to resolve offset for '{fieldName}'", ex);
+            APILogger.ReportInternal("GameObj", $"Failed to resolve offset for '{fieldName}'", ex);
             return 0;
         }
     }
