@@ -599,15 +599,15 @@ Use this to verify each file before marking it done.
 | File | Namespace changed | Internal strings updated | Game-specific names verified in dump.cs | Compiles cleanly |
 |---|---|---|---|---|
 | `APIError.cs` | [x] | [x] | n/a | [x] |
-| `GameType.cs` | [x] | n/a | [x] | ☐ |
-| `OffsetCache.cs` | [x] | [x] | [x] | ☐ |
-| `GameObj.cs` | [x] | n/a | [x] | ☐ |
-| `GameQuery.cs` | [x] | n/a | [x] | ☐ |
+| `GameType.cs` | [x] | n/a | [x] | [x] |
+| `OffsetCache.cs` | [x] | [x] | [x] | [x] |
+| `GameObj.cs` | [x] | n/a | [x] | [x] |
+| `GameQuery.cs` | [x] | n/a | [x] | [x] |
 | `GamePatch.cs` | [x] | n/a | [x] | [x] |
 | `Collections.cs` | [x] | n/a | [x] | [x] |
-| `GameState.cs` | ☐ | n/a | ☐ | ☐ |
-| `Templates.cs` | ☐ | n/a | ☐ (DataTemplateLoader) | ☐ |
-| `APILoader.cs` | ☐ | n/a | ☐ (MelonGame strings) | ☐ |
+| `GameState.cs` | [x] | n/a | [x] | [x] |
+| `Templates.cs` | [] | n/a | [] (DataTemplateLoader) | [] |
+| `APILoader.cs` | [x] | n/a | [x] (MelonGame strings) | [x] |
 
 ## Appendix: Key Principles Reference
 
@@ -620,3 +620,25 @@ Use this to verify each file before marking it done.
 | 6 — Keep layers honest | The Clone limitation is documented. Runtime truth and data-layer truth are not conflated. |
 | 7 — Explicit contracts over guessing | `DataTemplateLoader` is verified against dump.cs before being trusted. Scene names are verified. MelonGame strings are read from the log, not guessed. |
 | 8 — Be a modkit, not a platform | No REPL, no Lua, no registry, no GUI. Those are later problems or out of scope. |
+
+## Appendix: Open Questions
+
+| Question | How to resolve |
+|---|---|
+| `DataTemplateLoader` exists in `Assembly-CSharp` | Identify that correct loading mechanism is used. |
+| What are the exact `MelonGame` studio and game name strings? | Read from `Latest.log` on first launch with MelonLoader installed |
+| `m_CachedPtr` is present and named correctly in this Unity 6 build | Unity internal — confirmed in `dump.cs` |
+| What is the exact tactical scene name the game uses? | Search `dump.cs` or check build settings. `GameState` currently checks for `"Tactical"` — must match exactly |
+| `Il2CppUtils` has no call sites — is it needed? | When a higher-tier file first needs `ToManagedString` or `GetManagedProxy`, wire it then. If no file in Tier 1 or Tier 2 requires it by the time those tiers are complete, remove it. |
+| `GameQuery.ClearCache` has no call sites and `FindAllCached` has been removed | Determine whether any future caching in `GameQuery` is planned. If not, remove `ClearCache` entirely. If a narrower cache is introduced later (e.g. for explicit singleton registration), re-evaluate at that point. Do not wire `ClearCache` into `APILoader.OnSceneLoaded` until there is something for it to clear. |
+| `GameDict` does not clear the inclusion bar that `GameList` and `GameArray` do — it wraps a less common type, carries two unverified assumptions requiring live runtime probing, and offers no keyed access. | Determine whether any real mod use case requires raw dictionary traversal with no accessible method surface on the owning class. If none is identified, remove `GameDict` and the Collections package becomes `GameList` and `GameArray` only. |
+| Should `GameState.cs` be handling code delay mechanisms | `GameState` is a tier 1 API `class` meant to allow the modder and other aspects of the `API` identify internal scenes. The inclusion of delay mechanisms in this class feels like an artifact of the previous SDK's approach, and does not fit the maxim "Correctness over Convenience." |
+| Which method on `TacticalManager` is the correct patch site for `GameState.NotifyTacticalReady`? The patch site must be a method that fires after all tactical fields and methods are safe to access. `OnTurnStart` firing on the first turn is the current best candidate, but has not been confirmed. | Observe `Latest.log` and game behaviour on first tactical session load. Confirm that when `OnTurnStart` fires for round 1, all `TacticalManager` fields and methods return valid state. Wire `APILoader` postfix accordingly once confirmed. |
+
+## Appendix: Decisions
+
+| Decision | Rationale |
+|---|---|
+| `GameType.HasField` removed | Thin public wrapper over `OffsetCache.FindField` that adds no value and invites unverified speculative lookups. Higher tier API files that need field existence checks should call `OffsetCache.FindField` directly with a verified name from `dump.cs`. |
+| `Il2CppUtils` is `internal static` in `Jiangyu.API.Internal`, file `Internal/Il2CppUtils.cs` | Utility methods for IL2CPP string conversion and proxy construction are internal infrastructure, not public API surface. Modders use `GameObj.ReadString`, `ToManaged`, and `As<T>`. Moving to `Internal` is consistent with `OffsetCache`. |
+| `FindAllCached` removed from `GameQuery` | `GameObj[]` is a snapshot of live Unity instances, not a stable resolution like an IL2CPP class pointer. A scene-scoped cache is only correct for types whose instance count does not change after scene load, but the method provided no way to express or enforce that constraint. Callers who need caching for a known-stable type can hold the result themselves. Correctness before convenience — Principle 8. |
