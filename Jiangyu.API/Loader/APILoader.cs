@@ -1,4 +1,5 @@
 ﻿using MelonLoader;
+using HarmonyLib;
 using Jiangyu.API;
 using Jiangyu.API.Internal;
 
@@ -13,6 +14,10 @@ public class APILoader : MelonMod
     {
         OffsetCache.Initialize();
         LoggerInstance.Msg("Jiangyu API initialised.");
+
+        // Initialize tactical events for C# event subscriptions
+        // Patches TacticalManager.InvokeOnX methods to fire API events
+        TacticalEvents.Initialize(HarmonyInstance);
     }
 
     public override void OnSceneWasLoaded(int buildIndex, string sceneName)
