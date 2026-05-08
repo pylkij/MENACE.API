@@ -69,7 +69,7 @@ Jiangyu (modkit)
   +-- Declarative patch layer      (JSON/data-driven — not yet built)
   +-- Jiangyu.API.dll              (this project — runtime code layer)
         |
-        +-- Tier 3: APIError       ← build first, everything depends on it
+        +-- Tier 3: APILogger       ← build first, everything depends on it
         +-- Tier 1: GameType       ← build second
         +-- Tier 1: OffsetCache    ← internal only
         +-- Tier 1: Il2CppUtils    ← internal only
@@ -89,6 +89,8 @@ field and method name verification against `dump.cs` before porting begins.
 
 ## Namespace and Naming
 
+Directory structure reflects source organisation only. All public types share the flat `Jiangyu.API` namespace regardless of which directory they live in. `Jiangyu.API.Internal` remains the only sub-namespace, reserved for infrastructure types that modders do not call directly.
+
 | Thing | Name |
 |---|---|
 | Namespace | `Jiangyu.API` |
@@ -96,8 +98,8 @@ field and method name verification against `dump.cs` before porting begins.
 | MelonInfo name string | `"Jiangyu API"` |
 | Entry point class | `APILoader` |
 | Entry point file | `Loader/APILoader.cs` |
-| Error system | `APIError` |
-| Error system file | `Core/APIError.cs` |
+| Error system | `APILogger` |
+| Error system file | `Core/APILogger.cs` |
 
 The MelonInfo name string `"Jiangyu API"` is what modders put in their
 `MelonDependency` attribute. It must match exactly.
@@ -116,21 +118,21 @@ Paths are resolved via `Directory.Build.props` one level above the `.csproj`.
 
 ---
 
-## APIError Contract
+## APILogger Contract
 
 ```csharp
 // Public — for modders
-APIError.Error(string modId, string message, Exception ex = null)
-APIError.Warn(string modId, string message, Exception ex = null)
-APIError.Info(string modId, string message)
-APIError.Fatal(string modId, string message, Exception ex = null)
-APIError.ErrorCount        // int, errors + fatals since startup
-APIError.ResetCount()      // call on scene load if per-scene tracking needed
+APILogger.Error(string modId, string message, Exception ex = null)
+APILogger.Warn(string modId, string message, Exception ex = null)
+APILogger.Info(string modId, string message)
+APILogger.Fatal(string modId, string message, Exception ex = null)
+APILogger.ErrorCount        // int, errors + fatals since startup
+APILogger.ResetCount()      // call on scene load if per-scene tracking needed
 
 // Internal — for Jiangyu.API files only
-APIError.ReportInternal(string context, string message, Exception ex = null)
-APIError.WarnInternal(string context, string message)
-APIError.InfoInternal(string context, string message)
+APILogger.ReportInternal(string context, string message, Exception ex = null)
+APILogger.WarnInternal(string context, string message)
+APILogger.InfoInternal(string context, string message)
 ```
 
 Log prefix format: `[ModId:Context] Message` or `[ModId] Message` if no context.
@@ -208,7 +210,7 @@ this list as each is resolved.
 - Keep suggestions within Jiangyu's stated scope — modkit, not platform
 
 **Should not:**
-- Re-introduce the ring buffer, rate limiting, or `OnError` event into `APIError` without a concrete use case that cannot be served by `ErrorCount` alone
+- Re-introduce the ring buffer, rate limiting, or `OnError` event into `APILogger` without a concrete use case that cannot be served by `ErrorCount` alone
 - Add Roslyn, MoonSharp, SharpGLTF, or other Menace Modkit app dependencies
 - Port higher tiers (Tier 4+) without first verifying every field and method name in `dump.cs`
 - Treat Menace SDK source as correct for this game without verification

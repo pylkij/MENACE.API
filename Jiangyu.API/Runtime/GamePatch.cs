@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using HarmonyLib;
+using UnityEngine.Events;
 
 namespace Jiangyu.API;
 
@@ -11,6 +13,9 @@ namespace Jiangyu.API;
 /// </summary>
 public static class GamePatch
 {
+    private static Assembly _gameAssembly;
+    private static readonly Dictionary<string, Type> _typeCache = [];
+
     /// <summary>
     /// Apply a Harmony Postfix patch by type name and method name.
     /// Returns false and logs to APILogger on failure (never throws).
@@ -201,19 +206,22 @@ public static class GamePatch
             return null;
         }
 
+        if (_typeCache.TryGetValue(typeName, out var cached))
+            return cached;
+
         try
         {
-            var gameAssembly = AppDomain.CurrentDomain.GetAssemblies()
+            _gameAssembly ??= AppDomain.CurrentDomain.GetAssemblies()
                 .FirstOrDefault(a => a.GetName().Name == "Assembly-CSharp");
 
-            if (gameAssembly == null)
+            if (_gameAssembly == null)
             {
                 APILogger.ReportInternal("GamePatch", "Assembly-CSharp not loaded");
                 return null;
             }
 
             // Try exact match first
-            var type = gameAssembly.GetTypes()
+            var type = _gameAssembly.GetTypes()
                 .FirstOrDefault(t => t.Name == typeName || t.FullName == typeName);
 
             if (type == null)
@@ -223,6 +231,7 @@ public static class GamePatch
                 return null;
             }
 
+            _typeCache[typeName] = type;
             return type;
         }
         catch (Exception ex)

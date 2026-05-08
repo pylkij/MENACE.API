@@ -17,17 +17,17 @@ public class GameType
 {
     // IL2CPP assembly names - use .dll extension (this is what IL2CPP expects)
     private static readonly string[] FallbackAssemblies =
-    {
+    [
         "Assembly-CSharp.dll",
         "UnityEngine.CoreModule.dll",
         "UnityEngine.UIModule.dll",
         "UnityEngine.UI.dll",
         "Unity.TextMeshPro.dll",
         "mscorlib.dll",
-    };
+    ];
 
-    private static readonly Dictionary<string, GameType> _nameCache = new();
-    private static readonly Dictionary<IntPtr, GameType> _ptrCache = new();
+    private static readonly Dictionary<string, GameType> _nameCache = [];
+    private static readonly Dictionary<IntPtr, GameType> _ptrCache = [];
 
     public IntPtr ClassPointer { get; }
     public string FullName { get; }
@@ -123,7 +123,7 @@ public class GameType
             // The managed proxy has "Il2Cpp" prefix we need to strip for IL2CPP lookup
             var fullName = managedType.FullName ?? "";
             if (fullName.StartsWith("Il2Cpp"))
-                fullName = fullName.Substring(6);
+                fullName = fullName[6..];
 
             var dotIdx = fullName.LastIndexOf('.');
             var realNs = dotIdx > 0 ? fullName[..dotIdx] : "";
